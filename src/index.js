@@ -12,24 +12,23 @@ inputEl.addEventListener('input', debounce(searchFunc, DEBOUNCE_DELAY));
 
 function searchFunc(event) {
   const valueEl = event.target.value.trim();
+  if (!valueEl) {
+    removeElems();
+  }
   fetchCountries(valueEl)
     .then(data => {
-      if (data.status === 404) {
-        removeElems();
-        throw new Error(error);
-      }
       let count = data.length;
       if (count > 10) {
         removeElems();
         Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
       } else if (count >= 2 && count <= 10) {
-        removeElems();
         renderListCountries(data);
       } else if (count === 1) {
         renderSingleCountry(data);
       }
     })
     .catch(error => {
+      removeElems();
       Notiflix.Notify.failure('Oops, there is no country with that name');
     });
 }
